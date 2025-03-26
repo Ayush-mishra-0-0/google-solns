@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Result</title>
+    <style>
+        .video-container { margin: 30px auto; max-width: 800px; }
+        video { width: 100%; }
+        .download-btn { 
+            padding: 10px 20px; 
+            background: #3498db; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Processed Video</h1>
+        <div class="video-container">
+            <video controls>
+                <source src="{{ url_for('download', video_id=video_id) }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        <a href="{{ url_for('download', video_id=video_id) }}" download>
+            <button class="download-btn">Download Video</button>
+        </a>
+    </div>
+</body>
+</html>

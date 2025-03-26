@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Processor</title>
+    <style>
+        .container { max-width: 800px; margin: 50px auto; text-align: center; }
+        form { border: 2px dashed #ccc; padding: 20px; }
+        input[type="file"] { margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Upload Lecture Video</h1>
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="video" accept="video/*" required>
+            <br>
+            <button type="submit">Process Video</button>
+        </form>
+    </div>
+</body>
+</html>
