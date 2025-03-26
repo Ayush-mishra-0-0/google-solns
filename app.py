@@ -12,7 +12,7 @@ log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)  
 
 app = Flask(__name__)
-# app.secret_key = 'your-secret-key-here'
+app.secret_key = 'your-secret-key-here'
 
 UPLOAD_FOLDER = 'uploads'
 PROCESSED_FOLDER = 'media/videos'
