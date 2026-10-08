@@ -310,7 +310,8 @@ def upload_to_youtube(path: Path, story: dict, reference: dict, channel_id: str,
             "tags": ["math", "visual explanation", "education"],
             "defaultLanguage": "en",
         },
-        "status": {"privacyStatus": privacy, "selfDeclaredMadeForKids": False},
+        "status": {"privacyStatus": privacy, "selfDeclaredMadeForKids": False,
+                   "containsSyntheticMedia": False},
     }
     request = youtube.videos().insert(
         part="snippet,status", body=body,
@@ -322,6 +323,16 @@ def upload_to_youtube(path: Path, story: dict, reference: dict, channel_id: str,
     video_id = response.get("id")
     if not video_id:
         raise RuntimeError("YouTube returned no video ID")
+    thumbnail = path.parent / "thumbnail.png"
+    if thumbnail.exists():
+        try:
+            youtube.thumbnails().set(
+                videoId=video_id,
+                media_body=MediaFileUpload(str(thumbnail), mimetype="image/png"),
+            ).execute()
+        except Exception as exc:
+            # The video was already uploaded: don't lose its ID or retry the upload.
+            print(f"Thumbnail could not be set: {exc}", file=sys.stderr)
     return video_id
 
 
