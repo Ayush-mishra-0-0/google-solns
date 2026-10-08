@@ -6,7 +6,9 @@ import subprocess
 import google.generativeai as genai
 
 # Configure GenAI
-API_KEY = "AIzaSyDNQ3uLiUTQVljD8Cj5vAAB1HLnk2FQnU4"
+API_KEY = os.environ.get("GEMINI_API_KEY")
+if not API_KEY:
+    raise RuntimeError("Set GEMINI_API_KEY in the environment")
 genai.configure(api_key=API_KEY)
 # client= genai.Client()
 # -------------------------------

@@ -1,0 +1,18 @@
+{
+  "channel_id": "UCk-PE_vxi8hpAzBOpfTxZBw",
+  "gemini_model": "gemini-2.5-flash",
+  "topic_seeds": [
+    "Fourier transform intuition",
+    "Bayes theorem visualized",
+    "eigenvectors and eigenvalues",
+    "gradient descent explained",
+    "why imaginary numbers matter",
+    "linear algebra matrix transformations",
+    "probability paradoxes",
+    "neural networks backpropagation",
+    "calculus chain rule visualized",
+    "how the central limit theorem works",
+    "Laplace transform intuition",
+    "set theory paradoxes"
+  ]
+}

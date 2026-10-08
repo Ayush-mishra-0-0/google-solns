@@ -1,0 +1,124 @@
+name: Autonomous educational video
+
+on:
+  pull_request:
+    paths:
+      - "autochannel/**"
+      - ".github/workflows/autochannel.yml"
+  workflow_dispatch:
+  schedule:
+    # Twice weekly, 09:30 IST. Change once the channel's ideal cadence is known.
+    - cron: "0 4 * * 2,5"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: autochannel-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m unittest discover -s autochannel/tests -v
+
+
+  render-smoke-test:
+    needs: unit-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: System requirements
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            ffmpeg libcairo2-dev libpango1.0-dev pkg-config \
+            texlive-latex-base texlive-latex-recommended \
+            texlive-latex-extra texlive-fonts-recommended dvisvgm
+      - name: Manim
+        run: python -m pip install "manim>=0.19,<0.21"
+      - name: Render all five layouts
+        env:
+          AUTOCHANNEL_SPEC: ${{ github.workspace }}/autochannel/tests/fixture_render.json
+        run: |
+          python -m manim -ql --media_dir smoke-output \
+            -o smoke.mp4 autochannel/scene.py AutoChannelScene
+          find smoke-output -name smoke.mp4 -type f -print
+          test "$(find smoke-output -name smoke.mp4 -type f | wc -l)" -eq 1
+          ffprobe -v error -show_entries format=duration \
+            -of default=noprint_wrappers=1 smoke-output/videos/scene/480p15/smoke.mp4
+      - name: Attach sample render
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: manim-smoke-${{ github.run_id }}
+          path: smoke-output/videos/scene/480p15/smoke.mp4
+          if-no-files-found: warn
+
+  create-video:
+    needs: unit-tests
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 110
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: autochannel/requirements.txt
+      - name: System rendering dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            ffmpeg libcairo2-dev libpango1.0-dev pkg-config \
+            texlive-latex-base texlive-latex-recommended \
+            texlive-latex-extra texlive-fonts-recommended dvisvgm
+      - name: Python dependencies
+        run: python -m pip install -r autochannel/requirements.txt
+      - name: Research, script, render and optionally upload
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          YOUTUBE_TOKEN_JSON_BASE64: ${{ secrets.YOUTUBE_TOKEN_JSON_BASE64 }}
+          AUTOCHANNEL_MODE: ${{ vars.AUTOCHANNEL_MODE || 'plan' }}
+          AUTOCHANNEL_PRIVACY: ${{ vars.AUTOCHANNEL_PRIVACY || 'private' }}
+        run: |
+          python -m autochannel.pipeline \
+            --config autochannel/settings.json \
+            --state autochannel/state/ledger.json \
+            --mode "$AUTOCHANNEL_MODE" \
+            --privacy "$AUTOCHANNEL_PRIVACY"
+      - name: Persist topic and upload-attempt ledger
+        if: always()
+        run: |
+          if test -f autochannel/state/ledger.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -f autochannel/state/ledger.json
+            if ! git diff --cached --quiet; then
+              git commit -m "chore: record generated videos and upload attempts"
+              git push
+            fi
+          fi
+      - name: Save drafts and QA results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: autochannel-output-${{ github.run_id }}
+          path: outputs/
+          if-no-files-found: warn
+          retention-days: 7

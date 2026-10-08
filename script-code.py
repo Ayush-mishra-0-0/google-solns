@@ -182,7 +182,9 @@ import google.generativeai as genai
 # from google import genai
 
 # Configure the API key (there's no Client class in the new version)
-API_KEY = "AIzaSyDNQ3uLiUTQVljD8Cj5vAAB1HLnk2FQnU4"
+API_KEY = os.environ.get("GEMINI_API_KEY")
+if not API_KEY:
+    raise RuntimeError("Set GEMINI_API_KEY in the environment")
 genai.configure(api_key=API_KEY)
 
 # Import file functions; the current version uses upload_file.
