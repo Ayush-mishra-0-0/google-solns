@@ -157,8 +157,8 @@ class GeneratedScene(MovingCameraScene):
 
 
 
-api_key = "AIzaSyDNQ3uLiUTQVljD8Cj5vAAB1HLnk2FQnU4"
-# api_key="AIzaSyDt53Vr3SYGKEMAPtGVoH-2OlBpv81ICk8"
+api_key=os.environ["GEMINI_API_KEY"]
+# api_key=os.environ["GEMINI_API_KEY"]
 
 
 
@@ -166,7 +166,7 @@ api_key = "AIzaSyDNQ3uLiUTQVljD8Cj5vAAB1HLnk2FQnU4"
 
 from google import genai
 
-client = genai.Client(api_key="AIzaSyDt53Vr3SYGKEMAPtGVoH-2OlBpv81ICk8")
+client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
 print('My files:')
 for f in client.files.list():
@@ -174,14 +174,14 @@ for f in client.files.list():
 
 
 
-client = genai.Client(api_key="AIzaSyDNQ3uLiUTQVljD8Cj5vAAB1HLnk2FQnU4")
+client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 video_file = client.files.get(name="files/gobx18ohlaq7")
 
 """#pass the video file"""
 
 from google import genai
 
-client = genai.Client(api_key="AIzaSyDNQ3uLiUTQVljD8Cj5vAAB1HLnk2FQnU4")
+client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
 print("Uploading file...")
 video_file = client.files.upload(file="/content/small_vi.mp4")
@@ -227,7 +227,7 @@ Structure the extracted content in the following XML-like format:
     ...
 </content>  '''
 
-client = genai.Client(api_key="AIzaSyDNQ3uLiUTQVljD8Cj5vAAB1HLnk2FQnU4")
+client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
 
 
