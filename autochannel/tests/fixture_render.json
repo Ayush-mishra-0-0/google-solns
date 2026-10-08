@@ -1,0 +1,50 @@
+{
+  "beats": [
+    {
+      "heading": "Understanding a transformation",
+      "body": "Think in pictures before memorizing the formula.",
+      "narration": "A useful model starts with an intuitive picture of the transformation and how it moves points in space.",
+      "layout": "concept"
+    },
+    {
+      "heading": "Before and after",
+      "body": "Track what changed and what stayed fixed.",
+      "narration": "Compare two possible outcomes and notice which property stays exactly the same.",
+      "layout": "comparison",
+      "left": "Before: input",
+      "right": "After: output"
+    },
+    {
+      "heading": "Shape of a sine wave",
+      "body": "The curve repeats every full turn.",
+      "narration": "The sine graph oscillates above and below zero as we increase the input.",
+      "layout": "graph",
+      "curve": "sin"
+    },
+    {
+      "heading": "A short identity",
+      "body": "We can connect sine and cosine visually.",
+      "narration": "The equation gives us a compact way of expressing the connection between two familiar functions.",
+      "layout": "equation",
+      "equation": "\\sin^2(x)+\\cos^2(x)=1"
+    },
+    {
+      "heading": "How to reason",
+      "body": "Use intuition, derive, and then test.",
+      "narration": "We first build intuition, then derive a formula, and finally verify it with an example.",
+      "layout": "timeline",
+      "steps": [
+        "Intuition",
+        "Derivation",
+        "Application"
+      ]
+    }
+  ],
+  "durations": [
+    3,
+    3,
+    3,
+    3,
+    3
+  ]
+}
